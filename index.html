@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Generative Quantum Leaper - Enhanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap');
+
+        :root {
+            /* Muted Gold & Teal Theme (from provided image) */
+            --dark-bg: linear-gradient(135deg, #101525 0%, #191c33 50%, #222640 100%);
+            --glass-bg: rgba(26, 28, 46, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-cyan: #00ffff; /* Light blue/cyan */
+            --electric-purple: #a855f7; /* Purple */
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --text-primary: #ffffff; /* Soft White */
+            --text-secondary: #94a3b8;
+            --accent-gold: #fbbf24; /* Golden color */
+            --shadow-light: rgba(0, 255, 255, 0.4);
+            --shadow-dark: rgba(168, 85, 247, 0.5);
+            --logo-url: url('https://image2url.com/images/1758012911716-626ad805-1d30-4694-a371-e0a2e1a93eac.png');
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+
+        /* Enhanced grid and logo background pattern */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.05;
+        }
+
+        body::before {
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(82, 209, 209, 0.1) 1.5px, transparent 2px), repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(82, 209, 209, 0.1) 1.5px, transparent 2px);
+            background-size: 50px 50px;
+            animation: panBackground 60s linear infinite;
+        }
+        
+        body::after {
+            background-image: var(--logo-url);
+            background-repeat: repeat;
+            background-size: 150px;
+            animation: pulseLogo 20s linear infinite alternate;
+            opacity: 0.02;
+        }
+
+        @keyframes panBackground {
+            from { background-position: 0 0; }
+            to { background-position: 50px 50px; }
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); opacity: 0.02; }
+            50% { transform: scale(1.05); opacity: 0.03; }
+            100% { transform: scale(1); opacity: 0.02; }
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+            opacity: 0.1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Audio controls */
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .audio-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(26, 28, 46, 0.4);
+            color: var(--neon-cyan);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 10px rgba(82, 209, 209, 0.3);
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.1);
+            background: rgba(82, 209, 209, 0.2);
+            box-shadow: 0 0 20px var(--shadow-light);
+        }
+
+        /* Start screen enhancements */
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            animation: fadeIn 2s ease-in-out;
+            background: transparent;
+        }
+
+        #start-screen.hidden {
+            display: none;
+        }
+        
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 2s ease-in-out;
+            position: relative;
+        }
+
+        .logo-image {
+            width: clamp(180px, 35vw, 350px);
+            max-height: 400px;
+            object-fit: contain;
+            /* Removed the animation, added a subtle glow */
+            filter: drop-shadow(0 0 8px var(--neon-cyan)) drop-shadow(0 0 16px var(--electric-purple));
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .logo-image:hover {
+            filter: drop-shadow(0 0 12px var(--neon-cyan)) drop-shadow(0 0 24px var(--electric-purple)) drop-shadow(0 0 36px var(--neon-cyan));
+            transform: scale(1.05);
+        }
+        
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 900;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(210, 180, 140, 0.5);
+            animation: titleFadeIn 2s ease-in-out;
+            letter-spacing: 3px;
+            margin-top: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        @keyframes titleFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .start-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--dark-bg);
+            background: linear-gradient(45deg, var(--electric-purple), var(--neon-cyan));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 10px 30px var(--shadow-dark),
+                0 0 50px var(--shadow-light);
+            background: linear-gradient(45deg, var(--neon-cyan), var(--electric-purple));
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* Game container enhancements */
+        #game-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 95vh;
+            display: none;
+            position: relative;
+            margin: 2.5vh auto;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            backdrop-filter: blur(25px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideIn 1s ease-out forwards;
+            z-index: 5;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        #game-container.visible {
+            display: flex;
+        }
+
+        /* Reverted to old header layout */
+        .game-header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            position: relative;
+        }
+        
+        /* Removed the header-specific logo background for a cleaner look with the title */
+
+        .stats-left, .stats-right {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-button {
+            padding: 0.5rem 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            background: linear-gradient(45deg, var(--electric-purple), var(--neon-cyan));
+            border: none;
+            color: var(--text-primary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .stat-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-dark), 0 0 20px var(--shadow-light);
+            background: linear-gradient(45deg, var(--neon-cyan), var(--electric-purple));
+        }
+        
+        #user-id-display {
+            font-size: 0.8rem;
+            text-align: right;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--neon-cyan);
+            text-align: center;
+            text-shadow: 0 0 15px var(--neon-cyan);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* The rest of the CSS and JS from the last version is included below, as it's not being changed. */
+
+
+        /* Enhanced story output */
+        .story-container {
+            flex-grow: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .story-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .story-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .story-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--electric-purple), var(--neon-cyan));
+            border-radius: 6px;
+        }
+
+        /* Enhanced message bubbles */
+        .message-bubble {
+            max-width: 85%;
+            padding: 1.5rem 2rem;
+            border-radius: 25px;
+            position: relative;
+            animation: messageSlide 0.6s ease-out;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .message-bubble.game {
+            background: linear-gradient(135deg, rgba(26, 28, 46, 0.4), rgba(82, 209, 209, 0.2));
+            border: 1px solid rgba(82, 209, 209, 0.5);
+            align-self: flex-start;
+            color: var(--text-primary);
+            border-bottom-left-radius: 8px;
+        }
+
+        .message-bubble.user {
+            background: linear-gradient(135deg, rgba(48, 128, 128, 0.2), rgba(48, 128, 128, 0.1));
+            border: 1px solid rgba(48, 128, 128, 0.5);
+            align-self: flex-end;
+            color: var(--text-primary);
+            border-bottom-right-radius: 8px;
+        }
+
+        .message-bubble.system {
+            background: linear-gradient(135deg, rgba(210, 180, 140, 0.2), rgba(210, 180, 140, 0.1));
+            border: 1px solid rgba(210, 180, 140, 0.5);
+            align-self: center;
+            text-align: center;
+            color: var(--accent-gold);
+            font-weight: 600;
+            max-width: 70%;
+        }
+
+        /* Enhanced input area */
+        .input-area {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #user-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            color: var(--neon-cyan);
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        #user-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 
+                0 0 20px var(--shadow-light),
+                inset 0 0 20px rgba(82, 209, 209, 0.1);
+        }
+
+        #user-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .send-button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            background: linear-gradient(45deg, var(--electric-purple), var(--neon-cyan));
+            color: var(--text-primary);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 10px 25px var(--shadow-dark),
+                0 0 30px var(--shadow-light);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Loading and typing indicators */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 1rem 2rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            animation: typingPulse 1.5s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        #leap-button {
+            display: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            background: linear-gradient(45deg, var(--electric-purple), var(--neon-cyan));
+            color: var(--text-primary);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(82, 209, 209, 0.2);
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+        }
+        
+        #continue-button {
+            display: none;
+        }
+
+        .speech-btn {
+            background: transparent;
+            border: none;
+            color: var(--neon-cyan);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+        
+        .speech-btn:hover {
+            color: var(--electric-purple);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(0.9); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes titleFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typingPulse {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.3; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .game-header {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+            .stats-left, .stats-right {
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .stat-item {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+            .message-bubble {
+                max-width: 95%;
+                font-size: 1rem;
+                padding: 1rem;
+            }
+            .input-area {
+                padding: 1rem;
+            }
+            .input-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .send-button {
+                width: 100%;
+            }
+            .quick-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Audio controls -->
+    <div class="audio-controls">
+        <button class="audio-btn" id="music-toggle" title="Toggle Music">🎵</button>
+        <button class="audio-btn" id="sfx-toggle" title="Toggle Sound Effects">🔊</button>
+        <button class="audio-btn" id="lang-toggle" title="Toggle Language">🌐</button>
+        <button class="audio-btn" id="next-song-btn" title="Next Song">🎶</button>
+    </div>
+
+    <!-- Enhanced start screen -->
+    <div id="start-screen">
+        <div class="logo-container">
+            <img src="https://image2url.com/images/1758012911716-626ad805-1d30-4694-a371-e0a2e1a93eac.png" alt="Quantum Leaper Logo" class="logo-image">
+        </div>
+        
+        <div class="start-buttons">
+            <button class="btn-primary" id="enter-button">Start New Game</button>
+            <button class="btn-primary" id="demo-button">Experience Random Reality</button>
+        </div>
+    </div>
+
+    <!-- Old-style game container -->
+    <div id="game-container">
+        <div class="game-header">
+            <div class="stats-left">
+                <button class="stat-button" id="stop-button">END GAME</button>
+                <div class="stat-item">
+                    <span class="stat-value" id="score">0</span>
+                    <span class="stat-label">SCORE</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="actions">0</span>
+                    <span class="stat-label">ACTIONS</span>
+                </div>
+            </div>
+            
+            <div class="game-title">QUANTUM LEAPER</div>
+            
+            <div class="stats-right">
+                <div class="stat-item">
+                    <span class="stat-value" id="time">00:00</span>
+                    <span class="stat-label">TIME</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="level">1</span>
+                    <span class="stat-label">LEVEL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="story-container" id="story-output">
+            <div class="typing-indicator" id="typing-indicator">
+                <span>Quantum AI is processing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="quick-actions" id="quick-actions">
+                <button class="quick-action-btn" data-action="look around">👀 Look Around</button>
+                <button class="quick-action-btn" data-action="check inventory">🎒 Check My Bag</button>
+                <button class="quick-action-btn" data-action="use scanner">🔍 Use My Tool</button>
+                <button class="quick-action-btn" data-action="help">❓ Help</button>
+                <button class="quick-action-btn hint-btn" data-action="hint" style="display: none;">💡 Get a Hint</button>
+            </div>
+            <button class="btn-primary" id="leap-button" style="display: none;">Leap to New Reality</button>
+            
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="user-input" placeholder="Enter your quantum command..." disabled maxlength="500">
+                </div>
+                <button class="send-button" id="send-button">TRANSMIT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gemini API Key (set to empty string as per instructions)
+        const geminiApiKey = "AIzaSyDjsU0HWM82BmsSOIYZFKZ_wV80ACypjmI";
+        const ttsApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent';
+
+        // Game state
+        let gameState = {
+            theme: '',
+            chatHistory: [],
+            isFirstTurn: true,
+            isGameRunning: false,
+            score: 0,
+            actions: 0,
+            level: 1,
+            startTime: null,
+            currentTheme: 'default',
+            soundEnabled: true,
+            musicEnabled: false, // Default to false, will start on user interaction
+            language: 'english'
+        };
+        
+        // Global variables to manage audio playback state
+        let currentAudio = null;
+        let currentPlayingButton = null;
+        // Audio cache to store generated audio URLs
+        const audioCache = {};
+        let backgroundMusic = null;
+        let currentSongIndex = 0;
+
+        // Music data - multiple sequences to choose from
+        const musicSequences = [
+            // Song 1: Calm and simple
+            ["C3", "Eb3", "F3", "G3", "Bb3", "C4", "Eb4", "F4", "G4", "Bb4"],
+            // Song 2: More melodic, dreamy
+            ["D4", "C4", "G3", "A3", "F3", "G3", "C4"],
+            // Song 3: Soothing, slower tempo
+            ["A2", "G2", "E3", "D3", "C3", "B2", "A2"]
+        ];
+
+        // DOM elements
+        const elements = {
+            startScreen: document.getElementById('start-screen'),
+            gameContainer: document.getElementById('game-container'),
+            enterButton: document.getElementById('enter-button'),
+            demoButton: document.getElementById('demo-button'),
+            storyOutput: document.getElementById('story-output'),
+            userInput: document.getElementById('user-input'),
+            sendButton: document.getElementById('send-button'),
+            typingIndicator: document.getElementById('typing-indicator'),
+            quickActions: document.getElementById('quick-actions'),
+            leapButton: document.getElementById('leap-button'),
+            musicToggle: document.getElementById('music-toggle'),
+            sfxToggle: document.getElementById('sfx-toggle'),
+            langToggle: document.getElementById('lang-toggle'),
+            nextSongBtn: document.getElementById('next-song-btn'),
+            score: document.getElementById('score'),
+            actions: document.getElementById('actions'),
+            time: document.getElementById('time'),
+            level: document.getElementById('level'),
+            stopButton: document.getElementById('stop-button')
+        };
+        
+        // --- Game Logic ---
+        
+        // Helper function to decode base64
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Helper function to convert PCM to WAV
+        function pcmToWav(pcmData, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+            const view = new DataView(buffer);
+            
+            // WAV header
+            let offset = 0;
+            function writeString(s) {
+                for (let i = 0; i < s.length; i++) {
+                    view.setUint8(offset++, s.charCodeAt(i));
+                }
+            }
+            function writeUint16(i) {
+                view.setUint16(offset, i, true);
+                offset += 2;
+            }
+            function writeUint32(i) {
+                view.setUint32(offset, i, true);
+                offset += 4;
+            }
+
+            writeString('RIFF');
+            writeUint32(36 + pcmData.length * 2);
+            writeString('WAVE');
+            writeString('fmt ');
+            writeUint32(16);
+            writeUint16(1);
+            writeUint16(1);
+            writeUint32(sampleRate);
+            writeUint32(sampleRate * 2);
+            writeUint16(2);
+            writeUint16(16);
+            writeString('data');
+            writeUint32(pcmData.length * 2);
+
+            // Write PCM data
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(offset, pcmData[i], true);
+                offset += 2;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+        
+        // Tone.js generative music setup
+        function startBackgroundMusic() {
+            // Stop existing music first
+            if (backgroundMusic) {
+                backgroundMusic.stop();
+                backgroundMusic = null;
+            }
+
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
+            Tone.context.resume();
+            
+            // Create a simple synth
+            const synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: {
+                    type: "sine"
+                },
+                envelope: {
+                    attack: 2,
+                    decay: 1,
+                    sustain: 0.5,
+                    release: 5
+                },
+                volume: -20
+            }).toDestination();
+            
+            // Get the current song sequence
+            const notes = musicSequences[currentSongIndex];
+            
+            // Loop a sequence of random notes
+            backgroundMusic = new Tone.Loop(time => {
+                const note = notes[Math.floor(Math.random() * notes.length)];
+                synth.triggerAttackRelease(note, "2n", time);
+            }, "4n").start(0);
+
+            Tone.Transport.start();
+        }
+
+        // Function to pause the background music
+        function pauseBackgroundMusic() {
+            if (backgroundMusic) {
+                Tone.Transport.pause();
+            }
+        }
+
+        // Function to resume the background music
+        function resumeBackgroundMusic() {
+            if (backgroundMusic && gameState.musicEnabled) {
+                Tone.Transport.start();
+            }
+        }
+        
+        // Text-to-Speech function with exponential backoff for rate limit errors
+        async function speakText(text, button, retries = 3) {
+            // If this button is already playing, pause it and reset the state
+            if (currentAudio && currentPlayingButton === button) {
+                currentAudio.pause();
+                button.innerHTML = '🔊';
+                currentPlayingButton = null;
+                currentAudio = null;
+                resumeBackgroundMusic();
+                return;
+            }
+
+            // Stop any other audio that might be playing
+            if (currentAudio) {
+                currentAudio.pause();
+                if (currentPlayingButton) {
+                    currentPlayingButton.innerHTML = '🔊';
+                }
+            }
+
+            // Pause background music before speaking
+            pauseBackgroundMusic();
+
+            // Update the button state for the new request
+            currentPlayingButton = button;
+            if (button) {
+                 button.innerHTML = '⏸️';
+            }
+
+            // Use cached audio if available
+            if (audioCache[text]) {
+                currentAudio = new Audio(audioCache[text]);
+                currentAudio.play();
+                currentAudio.onended = () => {
+                     if (button) {
+                        button.innerHTML = '🔊';
+                     }
+                     currentPlayingButton = null;
+                     currentAudio = null;
+                     resumeBackgroundMusic();
+                };
+                return;
+            }
+
+            try {
+                const payload = {
+                    contents: [{
+                        parts: [{ text: text }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: "Leda" } // Female voice
+                            }
+                        }
+                    },
+                };
+                
+                const response = await fetch(`${ttsApiUrl}?key=${geminiApiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        console.warn('Rate limit hit for TTS API, retrying...');
+                        const delay = 2000 * (4 - retries);
+                        await new Promise(res => setTimeout(res, delay));
+                        return speakText(text, button, retries - 1);
+                    }
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 16000;
+                    
+                    const pcmData = new Int16Array(base64ToArrayBuffer(audioData));
+                    const wavBlob = pcmToWav(pcmData, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    // Cache the audio URL for future use
+                    audioCache[text] = audioUrl;
+
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+
+                    currentAudio.onended = () => {
+                         if (button) {
+                            button.innerHTML = '🔊';
+                         }
+                         currentPlayingButton = null;
+                         currentAudio = null;
+                         resumeBackgroundMusic();
+                    };
+
+                } else {
+                    throw new Error("Invalid audio response from API.");
+                }
+
+            } catch (error) {
+                console.error("Text-to-Speech Error:", error);
+                 if (button) {
+                    button.innerHTML = '🔊';
+                }
+                currentPlayingButton = null;
+                currentAudio = null;
+                resumeBackgroundMusic();
+            }
+        }
+        
+        // Enhanced particle system
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Enhanced message system
+        function printToScreen(text, type = 'game', isSpecial = false) {
+            const bubble = document.createElement('div');
+            bubble.className = `message-bubble ${type}`;
+            
+            if (isSpecial === 'success') {
+                bubble.classList.add('success-message');
+            } else if (isSpecial === 'error') {
+                bubble.classList.add('error-message');
+            }
+            
+            // Create a container for the text and button
+            const textContent = document.createElement('span');
+            textContent.innerHTML = formatMessage(text);
+            bubble.appendChild(textContent);
+
+            if (type !== 'user') {
+                const speechBtn = document.createElement('button');
+                speechBtn.className = 'speech-btn';
+                speechBtn.innerHTML = '🔊';
+                speechBtn.title = 'Read Aloud';
+                speechBtn.onclick = () => speakText(text, speechBtn);
+                bubble.appendChild(speechBtn);
+            }
+            
+            elements.storyOutput.appendChild(bubble);
+            elements.storyOutput.scrollTop = elements.storyOutput.scrollHeight;
+            
+            // Play sound effect
+            if (gameState.soundEnabled) {
+                playSound(type);
+            }
+            
+            // Update actions counter
+            if (type === 'user') {
+                gameState.actions++;
+                elements.actions.textContent = gameState.actions;
+            }
+        }
+
+        function formatMessage(text) {
+            // Add basic formatting support
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">$1</code>');
+        }
+
+        // Sound system
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            
+            // Create audio context for sound effects
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Different sounds for different message types
+            switch (type) {
+                case 'user':
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    break;
+                case 'game':
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    break;
+                case 'system':
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    break;
+            }
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Enhanced loading indicator
+        function showLoadingIndicator(show) {
+            elements.typingIndicator.style.display = show ? 'flex' : 'none';
+            elements.sendButton.textContent = show ? 'PROCESSING...' : 'TRANSMIT';
+            elements.userInput.disabled = show;
+            elements.sendButton.disabled = show;
+            
+            if (show) {
+                elements.storyOutput.scrollTop = elements.storyOutput.scrollHeight;
+            }
+        }
+        
+        // Function to control screen visibility
+        function showScreen(screen) {
+            if (screen === 'start') {
+                elements.startScreen.style.display = 'flex';
+                elements.gameContainer.style.display = 'none';
+            } else if (screen === 'game') {
+                elements.startScreen.style.display = 'none';
+                elements.gameContainer.style.display = 'flex';
+            }
+        }
+
+        // Enhanced theme system
+        async function applyTheme(themeName = null) {
+            if (!themeName && gameState.theme) {
+                // Auto-detect theme from content
+                const lowerTheme = gameState.theme.toLowerCase();
+                if (lowerTheme.includes('cyber') || lowerTheme.includes('future') || lowerTheme.includes('tech')) {
+                    themeName = 'cyberpunk';
+                } else if (lowerTheme.includes('medieval') || lowerTheme.includes('fantasy') || lowerTheme.includes('magic')) {
+                    themeName = 'fantasy';
+                } else if (lowerTheme.includes('space') || lowerTheme.includes('star') || lowerTheme.includes('galaxy')) {
+                    themeName = 'space';
+                }
+            }
+            
+            if (themeName && themeName !== gameState.currentTheme) {
+                document.body.className = `theme-${themeName}`;
+                gameState.currentTheme = themeName;
+                
+                // Add theme transition effect
+                document.body.style.transition = 'all 1s ease-in-out';
+                setTimeout(() => {
+                    document.body.style.transition = '';
+                }, 1000);
+            }
+
+            // Try to get AI-generated colors if we have an API key
+            if (geminiApiKey && gameState.theme) {
+                try {
+                    const response = await getThemeColors(gameState.theme);
+                    const root = document.documentElement;
+                    Object.entries(response).forEach(([key, value]) => {
+                        root.style.setProperty(`--${key}`, value);
+                    });
+                } catch (error) {
+                    console.warn('Could not get AI theme colors, using defaults');
+                }
+            }
+        }
+
+        // Enhanced AI integration
+        async function getThemeColors(theme) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
+            const systemPrompt = `Generate a sophisticated color palette for a futuristic game interface based on the theme: "${theme}". 
+            Return ONLY a JSON object with these exact properties: "dark-bg" (CSS gradient), "glass-bg" (RGBA), "neon-cyan" (hex), "electric-purple" (hex), "text-primary" (hex).
+            Make colors vibrant and fitting for the theme while maintaining excellent contrast and readability.`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: `Theme: ${theme}` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Theme color API failed');
+            
+            const result = await response.json();
+            const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+            return JSON.parse(jsonText);
+        }
+
+        // Enhanced Gemini API integration
+        async function getGeminiResponse(userCommand, retries = 3) {
+            let prompt = `You are a simple and friendly storyteller for a game called "Quantum Leaper".
+            The player is a brave hero who can travel to different worlds to fix problems, or "glitches."
+            
+            Current Game State:
+            World: ${gameState.theme}
+            Actions Taken: ${gameState.actions}
+            Current Score: ${gameState.score}
+            
+            GAME RULES:
+            - The player can go to any world they want.
+            - Each world has one main glitch to fix.
+            - Your job is to tell a good story and help the player.
+            - Use very simple words. The language should be very easy to understand, like a children's storybook. Avoid complex sentences.
+            - Use emojis to make the story fun and easy to understand.
+            
+            FIRST TURN (Picking a World):
+            1. Say hello and be happy the player chose a world.
+            2. Describe the new world in a simple and fun way.
+            3. Tell the player what the big glitch is. Explain the glitch in very simple words.
+            4. Give them a few simple clues to get started.
+            5. Ask them what they want to do first.
+
+            NEXT TURNS:
+            1. Answer the player's questions.
+            2. Tell them what happens next.
+            3. Give them small hints if they get stuck.
+            4. If they fix the glitch, say "QUANTUM SUCCESS!" and cheer for them.
+            5. Keep your answers short and easy to read, like 2 to 4 small paragraphs.
+
+            TONE: Friendly, fun, and encouraging. Use simple words.
+            `;
+
+            // Add Tanglish instruction if language is set to Tanglish
+            if (gameState.language === 'tanglish') {
+                prompt += `
+                IMPORTANT: ALL RESPONSES MUST BE IN TANGlish (Tamil words written in English script). If a Tamil word doesn't exist for a concept, you can use the English word. For example, say 'Oru periya castle' instead of 'A big castle'.`;
+            }
+            
+            prompt += `\nPlayer's Command: "${userCommand}"`;
+            
+            gameState.chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
+            const payload = {
+                contents: gameState.chatHistory,
+                generationConfig: {
+                    maxOutputTokens: 800,
+                    temperature: 0.8
+                }
+            };
+
+            let response;
+            try {
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(res => setTimeout(res, 2000));
+                    return getGeminiResponse(userCommand, retries - 1);
+                }
+                throw new Error("Network error. Please check your connection.");
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                if (retries > 0) {
+                    await new Promise(res => setTimeout(res, 2000));
+                    return getGeminiResponse(userCommand, retries - 1);
+                }
+                throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const textResponse = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            if (!textResponse && retries > 0) {
+                await new Promise(res => setTimeout(res, 2000));
+                return getGeminiResponse(userCommand, retries - 1);
+            }
+            if (!textResponse) {
+                throw new Error("Empty response from AI - please try again");
+            }
+
+            // Update score based on AI response
+            if (textResponse.includes("QUANTUM SUCCESS!")) {
+                gameState.score += 100;
+                gameState.level++;
+                elements.score.textContent = gameState.score;
+                elements.level.textContent = gameState.level;
+            }
+
+            gameState.chatHistory.push({ role: "model", parts: [{ text: textResponse }] });
+            
+            return textResponse;
+        }
+
+        // Game initialization and management
+        function initializeGame() {
+            // Check language setting and show appropriate initial message
+            if (gameState.language === 'tanglish') {
+                 printToScreen("⚡ QUANTUM DRIVE INITIALIZED ⚡", "system");
+                 printToScreen("Vaa vaa, dhairiyamana payanam povan! Nee unakku pudicha world-ku poi, andha 'glitch'-a sariyaakkanum.", "game");
+                 printToScreen("Game start panna, yenakku nee poga virumbum world-a soll. Example: 'oru magical forest' oru 'periya castle'.", "game");
+            } else {
+                 printToScreen("⚡ QUANTUM DRIVE INITIALIZED ⚡", "system");
+                 printToScreen("Welcome, brave traveler! You can go to any world you want to help solve a problem.", "game");
+                 printToScreen("To begin, please tell me which world you want to go to. For example, 'a magical forest' or 'a big castle'.", "game");
+            }
+            
+            elements.userInput.disabled = false;
+            elements.userInput.focus();
+            gameState.isGameRunning = true;
+
+            // Start music on game start
+            if (gameState.musicEnabled) {
+                startBackgroundMusic();
+            }
+        }
+
+        function startGame() {
+            showScreen('game');
+            initializeGame();
+        }
+
+        function startDemoMode() {
+            const randomRealities = ["A jungle with talking animals", "An underwater kingdom", "A castle in the sky", "A busy city of robots", "An ancient pyramid full of secrets"];
+            const randomReality = randomRealities[Math.floor(Math.random() * randomRealities.length)];
+            
+            startGame();
+            
+            // Show demo scenarios
+            setTimeout(() => {
+                elements.userInput.value = randomReality;
+                handleInput(randomReality);
+            }, 2000);
+        }
+
+        // Enhanced input handling
+        async function handleInput(command) {
+            if (!command?.trim() || !gameState.isGameRunning) return;
+            
+            const trimmedCommand = command.trim();
+            if (trimmedCommand.length > 500) {
+                printToScreen("⚠️ Command too long. Please keep it under 500 characters.", "system", "error");
+                return;
+            }
+
+            printToScreen(trimmedCommand, "user");
+            elements.userInput.value = '';
+
+            // Handle special commands
+            if (trimmedCommand.toLowerCase().startsWith('/')) {
+                handleSpecialCommand(trimmedCommand);
+                return;
+            }
+            
+            showLoadingIndicator(true);
+
+            try {
+                const response = await getGeminiResponse(trimmedCommand);
+
+                // Check for success states
+                if (response.includes("QUANTUM SUCCESS!")) {
+                    printToScreen(response, "game", "success");
+                    celebrateSuccess();
+                    elements.quickActions.style.display = 'none';
+                    elements.leapButton.style.display = 'block';
+                    elements.userInput.disabled = true;
+                    elements.sendButton.disabled = true;
+                } else {
+                    printToScreen(response, "game");
+                    if (gameState.isFirstTurn) {
+                        gameState.theme = trimmedCommand;
+                        updateQuickActions(gameState.theme);
+                        gameState.startTime = Date.now();
+                        updateTimer();
+                    }
+                    gameState.isFirstTurn = false;
+                    // Clear initial messages for cleaner experience
+                    setTimeout(() => {
+                        const messages = elements.storyOutput.querySelectorAll('.message-bubble.game');
+                        if (messages.length > 0) {
+                            messages.forEach(msg => msg.style.opacity = '0.3');
+                        }
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('AI Response Error:', error);
+                printToScreen(`⚠️ Quantum interference detected: ${error.message}`, "system", "error");
+                printToScreen("Attempting to re-establish connection... Please try a different command or theme.", "game");
+                if (gameState.isFirstTurn) {
+                    gameState.isFirstTurn = true; // Allow retry
+                }
+            } finally {
+                showLoadingIndicator(false);
+            }
+        }
+
+        // Special commands system
+        function handleSpecialCommand(command) {
+            const cmd = command.toLowerCase().substring(1);
+            
+            switch (cmd) {
+                case 'help':
+                    printToScreen("🔧 QUANTUM LEAPER COMMANDS:", "system");
+                    printToScreen("• Type naturally to interact with the world\n• Use quick action buttons for common actions\n• /reset - Start a new quantum leap\n• /score - View current statistics\n• /hint - Get a subtle hint", "game");
+                    break;
+                    
+                case 'reset':
+                    resetGame();
+                    break;
+                    
+                case 'score':
+                    printToScreen(`📊 QUANTUM STATISTICS:\nScore: ${gameState.score}\nActions: ${gameState.actions}\nLevel: ${gameState.level}\nTime: ${formatTime(Date.now() - gameState.startTime)}`, "system");
+                    break;
+                    
+                case 'hint':
+                    printToScreen("💡 Remember: Quantum leaping requires observing the environment, understanding the glitch, and finding creative solutions. Look for patterns and connections!", "system");
+                    break;
+                    
+                default:
+                    printToScreen("❓ Unknown command. Type '/help' for available commands.", "system");
+            }
+        }
+        
+        // New function to handle hint requests
+        async function getHint() {
+            showLoadingIndicator(true);
+            try {
+                const hintPrompt = `The player is stuck. Give them a simple, one-sentence hint about their current glitch. Do not give away the solution. Just a small clue.`;
+                const hintResponse = await getGeminiResponse(hintPrompt);
+                printToScreen("💡 " + hintResponse, "system");
+            } catch (error) {
+                printToScreen("⚠️ Hint system is offline. Try again later.", "system", "error");
+            } finally {
+                showLoadingIndicator(false);
+            }
+        }
+
+
+        // Quick actions system
+        function updateQuickActions(theme) {
+            const themeActions = {
+                cyberpunk: ['Talk to a robot', 'Look for clues', 'Check my bag', 'Get a Hint'],
+                fantasy: ['Talk to a wizard', 'Look for clues', 'Check my bag', 'Get a Hint'],
+                space: ['Talk to an alien', 'Look for clues', 'Check my bag', 'Get a Hint'],
+                default: ['Talk to someone', 'Look for clues', 'Check my bag', 'Get a Hint']
+            };
+            
+            const lowerTheme = theme?.toLowerCase() || '';
+            let actions = themeActions.default;
+            
+            if (lowerTheme.includes('cyber') || lowerTheme.includes('tech')) {
+                actions = themeActions.cyberpunk;
+            } else if (lowerTheme.includes('fantasy') || lowerTheme.includes('medieval') || lowerTheme.includes('magic')) {
+                actions = themeActions.fantasy;
+            } else if (lowerTheme.includes('space') || lowerTheme.includes('star') || lowerTheme.includes('galaxy')) {
+                actions = themeActions.space;
+            }
+            
+            elements.quickActions.innerHTML = actions.map(action => {
+                let emoji = '❓';
+                if (action.includes('Talk')) emoji = '🗣️';
+                if (action.includes('Look for clues')) emoji = '🔍';
+                if (action.includes('Check my bag')) emoji = '🎒';
+                if (action.includes('Hint')) emoji = '💡';
+                return `<button class="quick-action-btn" data-action="${action}">${emoji} ${action}</button>`;
+            }).join('');
+        }
+
+        // Game utilities
+        function celebrateSuccess() {
+            // Add celebration effects
+            document.body.style.animation = 'none';
+            document.body.offsetHeight; // Trigger reflow
+            document.body.style.animation = 'celebration 2s ease-in-out';
+            
+            // Add celebration particles
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => createCelebrationParticle(), i * 100);
+            }
+        }
+
+        function createCelebrationParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 10px;
+                height: 10px;
+                background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 1000;
+                left: ${Math.random() * 100}%;
+                top: 100%;
+                animation: celebration-float 3s ease-out forwards;
+            `;
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 3000);
+        }
+
+        function leapToNewReality() {
+            // Reset game state for a new leap
+            Object.assign(gameState, {
+                theme: '',
+                chatHistory: [],
+                isFirstTurn: true,
+                score: gameState.score, // Keep the score
+                actions: 0,
+                level: gameState.level, // Keep the level
+                startTime: null // Reset start time
+            });
+
+            // Reset UI and prepare for new game
+            elements.storyOutput.innerHTML = '';
+            elements.actions.textContent = '0';
+            elements.leapButton.style.display = 'none';
+            elements.quickActions.style.display = 'flex';
+            elements.userInput.disabled = false;
+            elements.sendButton.disabled = false;
+            document.body.className = '';
+            
+            initializeGame();
+        }
+
+        function resetGame() {
+            // Full reset for starting a completely new game from the beginning
+            Object.assign(gameState, {
+                theme: '',
+                chatHistory: [],
+                isFirstTurn: true,
+                isGameRunning: false,
+                score: 0,
+                actions: 0,
+                level: 1,
+                startTime: null // Reset start time
+            });
+            
+            // Pause music on game reset
+            if (backgroundMusic) {
+                backgroundMusic.stop();
+                Tone.Transport.stop();
+            }
+
+            // Reset UI
+            elements.storyOutput.innerHTML = '';
+            elements.score.textContent = '0';
+            elements.actions.textContent = '0';
+            elements.level.textContent = '1';
+            elements.leapButton.style.display = 'none';
+            elements.quickActions.style.display = 'flex';
+            showScreen('start');
+            document.body.className = '';
+        }
+
+        function updateTimer() {
+            if (gameState.startTime) {
+                const elapsed = Date.now() - gameState.startTime;
+                elements.time.textContent = formatTime(elapsed);
+            }
+            setTimeout(updateTimer, 1000);
+        }
+
+        function formatTime(ms) {
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // --- Event Listeners and Initial Setup ---
+        
+        elements.enterButton.addEventListener('click', () => {
+            startGame();
+            if (gameState.musicEnabled) {
+                startBackgroundMusic();
+            }
+        });
+
+        elements.demoButton.addEventListener('click', () => {
+            startDemoMode();
+            if (gameState.musicEnabled) {
+                startBackgroundMusic();
+            }
+        });
+
+        elements.leapButton.addEventListener('click', () => {
+            leapToNewReality();
+        });
+
+        elements.stopButton.addEventListener('click', () => resetGame());
+        
+        elements.sendButton.addEventListener('click', () => {
+            handleInput(elements.userInput.value);
+        });
+
+        elements.userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleInput(elements.userInput.value);
+            }
+        });
+
+        // Quick actions
+        elements.quickActions.addEventListener('click', (e) => {
+            const button = e.target.closest('.quick-action-btn');
+            if (button) {
+                const action = button.dataset.action;
+                if (action === 'Get a Hint') {
+                    getHint();
+                } else {
+                    elements.userInput.value = action;
+                    handleInput(action);
+                }
+            }
+        });
+        
+        function toggleLanguage() {
+            if (gameState.language === 'english') {
+                gameState.language = 'tanglish';
+                elements.langToggle.textContent = '🌐 TAMIL';
+            } else {
+                gameState.language = 'english';
+                elements.langToggle.textContent = '🌐 ENG';
+            }
+            // Reset game to apply new language
+            resetGame();
+            startGame();
+        }
+
+        elements.langToggle.addEventListener('click', toggleLanguage);
+
+        // Audio controls
+        elements.musicToggle.addEventListener('click', () => {
+            gameState.musicEnabled = !gameState.musicEnabled;
+            elements.musicToggle.textContent = gameState.musicEnabled ? '🎵' : '🔇';
+            if (gameState.musicEnabled) {
+                startBackgroundMusic();
+            } else {
+                pauseBackgroundMusic();
+            }
+        });
+        
+        elements.nextSongBtn.addEventListener('click', () => {
+             // Go to the next song, loop back if at the end
+            currentSongIndex = (currentSongIndex + 1) % musicSequences.length;
+            if (gameState.musicEnabled) {
+                startBackgroundMusic();
+            }
+        });
+
+        elements.sfxToggle.addEventListener('click', () => {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            elements.sfxToggle.textContent = gameState.soundEnabled ? '🔊' : '🔇';
+        });
+
+        // Add celebration keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes celebration {
+                0%, 100% { filter: hue-rotate(0deg); }
+                25% { filter: hue-rotate(90deg); }
+                50% { filter: hue-rotate(180deg); }
+                75% { filter: hue-rotate(270deg); }
+            }
+            
+            @keyframes celebration-float {
+                0% { 
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% { 
+                    transform: translateY(-100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize particles on page load
+        createParticles();
+    </script>
+</body>
+</html>
