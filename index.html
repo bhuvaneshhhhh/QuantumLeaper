@@ -1026,7 +1026,7 @@
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             
-            for (let i = 0; i < 50; i++) {
+            for (let i = 50; i < 100; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + '%';
@@ -1247,12 +1247,12 @@
             }
             
             prompt += `\nPlayer's Command: "${userCommand}"`;
-            
-            gameState.chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
+            const fullChatHistory = [...gameState.chatHistory, { role: "user", parts: [{ text: prompt }] }];
+            
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
             const payload = {
-                contents: gameState.chatHistory,
+                contents: fullChatHistory,
                 generationConfig: {
                     maxOutputTokens: 800,
                     temperature: 0.8
@@ -1286,14 +1286,14 @@
             const result = await response.json();
             const textResponse = result?.candidates?.[0]?.content?.parts?.[0]?.text;
             
-            if (!textResponse && retries > 0) {
-                await new Promise(res => setTimeout(res, 2000));
-                return getGeminiResponse(userCommand, retries - 1);
-            }
             if (!textResponse) {
+                if (retries > 0) {
+                    await new Promise(res => setTimeout(res, 2000));
+                    return getGeminiResponse(userCommand, retries - 1);
+                }
                 throw new Error("Empty response from AI - please try again");
             }
-
+            
             // Update score based on AI response
             if (textResponse.includes("QUANTUM SUCCESS!")) {
                 gameState.score += 100;
